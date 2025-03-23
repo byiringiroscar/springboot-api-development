@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service  // Registers this class as a Spring Bean (same as @Service)
 public class StudentService {
@@ -15,7 +16,18 @@ public class StudentService {
     public StudentService(StudentRepository studentRepository){
         this.studentRepository = studentRepository;
     }
+
     public List<Student> getStudent(){
         return studentRepository.findAll();
+    }
+
+    public void addNewStudent(Student student) {
+        Optional<Student> studentByOptional = studentRepository.findStudentByEmail(student.getEmail());
+        if(studentByOptional.isPresent()){
+            throw new IllegalStateException("email taken");
+        }
+
+        studentRepository.save(student);
+
     }
 }
